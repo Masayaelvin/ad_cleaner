@@ -52,7 +52,7 @@ def random_quote():
     last_api_call = datetime.fromisoformat(latest_quote["timestamp"])
 
     # Use cached quote if available and recent
-    if cache and (now - last_api_call) < timedelta(minutes=20 ):         
+    if cache and (now - last_api_call) < timedelta(minutes=240 ):         
         print("the most recent quote is", latest_quote)
         print(f"time difference is {now - last_api_call} you have to wait for that amount of time to get a new quote")
         print("you are getting randomm data from the cache")
