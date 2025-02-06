@@ -34,7 +34,6 @@ async function replaceAdsWithQuote() {
 
     const adSelectors = [
       "iframe",
-      '[id*="ad"]',
       '[class*="ad"]',
       "[data-ad-slot]",
       '[aria-label="Ads"]',
@@ -93,3 +92,19 @@ window.addEventListener("scroll", () => {
     removeAds();
     replaceAdsWithQuote();
 });
+
+console.log("Ad Cleaner Extension Content Script Loaded!");
+
+function hideBlockedAds() {
+  let blockedAds = JSON.parse(localStorage.getItem("blockedAds")) || [];
+  blockedAds.forEach((selector) => {
+    let elements = document.querySelectorAll(selector);
+    elements.forEach((el) => {
+      el.style.display = "none";
+    });
+  });
+}
+
+// Run when the page loads
+hideBlockedAds();
+
