@@ -54,7 +54,7 @@ def random_quote():
     # Use cached quote if available and recent
     if cache and (now - last_api_call) < timedelta(minutes=3):         
         print("the most recent quote is", latest_quote)
-        print(f"time difference is {now - last_api_call} you have to wait for that amount of time to get a new quote")
+        print(f"time difference is {now - last_api_call} you have to wait for 3 min get a new quote")
         print("you are getting randomm data from the cache")
         res = random.choice(cache)
         return {"quote": res["quote"], "author": res["author"]}

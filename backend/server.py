@@ -52,7 +52,7 @@ def random_quote():
     last_api_call = datetime.fromisoformat(latest_quote["timestamp"])
 
     # Use cached quote if available and recent
-    if cache and (now - last_api_call) < timedelta(minutes=3):         
+    if cache and (now - last_api_call) < timedelta(minutes=20 ):         
         print("the most recent quote is", latest_quote)
         print(f"time difference is {now - last_api_call} you have to wait for that amount of time to get a new quote")
         print("you are getting randomm data from the cache")
@@ -83,4 +83,4 @@ def random_quote():
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)  # Added reload=True for auto-reload
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)

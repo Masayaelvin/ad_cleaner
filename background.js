@@ -1,7 +1,15 @@
 chrome.runtime.onInstalled.addListener(() => {
+  // Add "Block this ad" option
   chrome.contextMenus.create({
     id: "blockAd",
     title: "Block this ad",
+    contexts: ["all"],
+  });
+
+  // Add "Unblock Last Ad" option
+  chrome.contextMenus.create({
+    id: "unblockAd",
+    title: "Unblock last ad",
     contexts: ["all"],
   });
 });
@@ -12,6 +20,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       target: { tabId: tab.id },
       function: manuallyBlockAd,
     });
+  } else if (info.menuItemId === "unblockAd") {
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      function: unblockLastAd,
+    });
   }
 });
 
@@ -21,18 +34,41 @@ function manuallyBlockAd() {
     function (event) {
       let element = event.target;
 
-      // Store the blocked element in localStorage
       let blockedAds = JSON.parse(localStorage.getItem("blockedAds")) || [];
-      blockedAds.push(getElementSelector(element));
-      localStorage.setItem("blockedAds", JSON.stringify(blockedAds));
+      let selector = getElementSelector(element);
 
-      // Hide the element
+      if (!blockedAds.includes(selector)) {
+        blockedAds.push(selector);
+        localStorage.setItem("blockedAds", JSON.stringify(blockedAds));
+      }
+
+      // Hide the ad
       element.style.display = "none";
 
       alert("Ad blocked!");
     },
     { once: true }
-  ); // Runs only for the next click
+  );
+}
+
+function unblockLastAd() {
+  let blockedAds = JSON.parse(localStorage.getItem("blockedAds")) || [];
+
+  if (blockedAds.length === 0) {
+    alert("No ads to unblock.");
+    return;
+  }
+
+  let lastBlockedSelector = blockedAds.pop(); // Remove the last blocked ad
+  localStorage.setItem("blockedAds", JSON.stringify(blockedAds)); // Save updated list
+
+  let element = document.querySelector(lastBlockedSelector);
+  if (element) {
+    element.style.display = ""; // Restore the original display
+    alert("Ad unblocked!");
+  } else {
+    alert("Ad not found. It may no longer exist on this page.");
+  }
 }
 
 function getElementSelector(element) {

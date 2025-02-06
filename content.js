@@ -3,11 +3,13 @@ console.log("Ad Cleaner Extension Content Script Loaded!");
 // Function to find and remove ads
 function removeAds() {
   const adSelectors = [
-    "iframe", // Most ads are iframes
-    '[id*="ad"]:not(body):not(html)', // Ignore entire page removal
-    '[class*="ad"]:not(body):not(html)',
-    "[data-ad-slot]", // Google Ads
-    '[aria-label="Ads"]',
+    'iframe[src*="google.com"]', // Google-hosted ad iframes
+    'iframe[src*="doubleclick.net"]', // DoubleClick (Google Ad Network)
+    "[data-ad-client]", // Google AdSense elements
+    "[data-ad-slot]", // Google Ad slots
+    ".adsbygoogle", // AdSense injected elements
+    'div[id^="google_ads_"]', // Google-generated ad IDs
+    "ins.adsbygoogle", // Common AdSense ad container
   ];
 
   adSelectors.forEach((selector) => {
@@ -23,7 +25,6 @@ function removeAds() {
   });
 }
 
-
 // Function to replace ads with a quote from the API
 async function replaceAdsWithQuote() {
   try {
@@ -33,11 +34,13 @@ async function replaceAdsWithQuote() {
     let quoteText = `"${data.quote}" - ${data.author}`;
 
     const adSelectors = [
-      "iframe", // Most ads are iframes
-      '[id*="ad"]:not(body):not(html)', // Ignore entire page removal
-      '[class*="ad"]:not(body):not(html)',
-      "[data-ad-slot]", // Google Ads
-      '[aria-label="Ads"]',
+      'iframe[src*="google.com"]', // Google-hosted ad iframes
+      'iframe[src*="doubleclick.net"]', // DoubleClick (Google Ad Network)
+      "[data-ad-client]", // Google AdSense elements
+      "[data-ad-slot]", // Google Ad slots
+      ".adsbygoogle", // AdSense injected elements
+      'div[id^="google_ads_"]', // Google-generated ad IDs
+      "ins.adsbygoogle", // Common AdSense ad container
     ];
 
     adSelectors.forEach((selector) => {
@@ -83,15 +86,14 @@ async function replaceAdsWithQuote() {
   }
 }
 
-
 // Run the functions when the page loads
 removeAds();
 replaceAdsWithQuote();
 
 // Run again when the user scrolls (to catch dynamically loaded ads)
 window.addEventListener("scroll", () => {
-    removeAds();
-    replaceAdsWithQuote();
+  removeAds();
+  replaceAdsWithQuote();
 });
 
 console.log("Ad Cleaner Extension Content Script Loaded!");
@@ -108,4 +110,3 @@ function hideBlockedAds() {
 
 // Run when the page loads
 hideBlockedAds();
-
