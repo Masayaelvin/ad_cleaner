@@ -33,9 +33,10 @@ async function replaceAdsWithQuote() {
     let quoteText = `"${data.quote}" - ${data.author}`;
 
     const adSelectors = [
-      "iframe",
-      '[class*="ad"]',
-      "[data-ad-slot]",
+      "iframe", // Most ads are iframes
+      '[id*="ad"]:not(body):not(html)', // Ignore entire page removal
+      '[class*="ad"]:not(body):not(html)',
+      "[data-ad-slot]", // Google Ads
       '[aria-label="Ads"]',
     ];
 
