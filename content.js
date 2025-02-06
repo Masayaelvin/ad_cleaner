@@ -2,58 +2,87 @@ console.log("Ad Cleaner Extension Content Script Loaded!");
 
 // Function to find and remove ads
 function removeAds() {
-    const adSelectors = [
-        'iframe',  // Most ads are in iframes
-        '[id*="ad"]',  // Elements with "ad" in the ID
-        '[class*="ad"]',  // Elements with "ad" in the class
-        '[data-ad-slot]', // Google AdSense ads
-        '[aria-label="Ads"]' // Some accessible ads
-    ];
+  const adSelectors = [
+    "iframe", // Most ads are iframes
+    '[id*="ad"]:not(body):not(html)', // Ignore entire page removal
+    '[class*="ad"]:not(body):not(html)',
+    "[data-ad-slot]", // Google Ads
+    '[aria-label="Ads"]',
+  ];
 
-    adSelectors.forEach(selector => {
-        let ads = document.querySelectorAll(selector);
-        ads.forEach(ad => {
-            ad.style.display = "none"; // Hide the ad
-            console.log("Removed Ad: ", ad);
-        });
+  adSelectors.forEach((selector) => {
+    let ads = document.querySelectorAll(selector);
+    ads.forEach((ad) => {
+      // Ignore large containers (to avoid removing entire pages)
+      let rect = ad.getBoundingClientRect();
+      if (rect.width < 800 && rect.height < 600) {
+        ad.style.display = "none";
+        console.log("Removed Ad:", ad);
+      }
     });
+  });
 }
+
 
 // Function to replace ads with a quote from the API
 async function replaceAdsWithQuote() {
-    try {
-        let response = await fetch("http://127.0.0.1:8000/random_quote"); // Fetch quote from FastAPI
-        let data = await response.json();
+  try {
+    let response = await fetch("http://127.0.0.1:8000/random_quote"); // Fetch quote from FastAPI
+    let data = await response.json();
 
-        let quoteText = `"${data.quote}" - ${data.author}`;
+    let quoteText = `"${data.quote}" - ${data.author}`;
 
-        const adSelectors = [
-            'iframe', '[id*="ad"]', '[class*="ad"]', '[data-ad-slot]', '[aria-label="Ads"]'
-        ];
+    const adSelectors = [
+      "iframe",
+      '[id*="ad"]',
+      '[class*="ad"]',
+      "[data-ad-slot]",
+      '[aria-label="Ads"]',
+    ];
 
-        adSelectors.forEach(selector => {
-            let ads = document.querySelectorAll(selector);
-            ads.forEach(ad => {
-                let quoteElement = document.createElement("div");
-                quoteElement.innerText = quoteText;
-                quoteElement.style.cssText = `
-                    background: #f9f9f9; 
-                    border-left: 4px solid #4CAF50;
-                    padding: 10px;
-                    font-size: 16px;
-                    font-family: Arial, sans-serif;
-                    color: #333;
-                    margin: 10px 0;
-                `;
-                
-                ad.parentNode.replaceChild(quoteElement, ad); // Replace ad with quote
-                console.log("Replaced Ad with Quote:", quoteElement);
-            });
-        });
-    } catch (error) {
-        console.error("Error fetching quote:", error);
-    }
+    adSelectors.forEach((selector) => {
+      let ads = document.querySelectorAll(selector);
+      ads.forEach((ad) => {
+        // Get ad's current styles
+        let adStyle = window.getComputedStyle(ad);
+        let width = adStyle.width;
+        let height = adStyle.height;
+        let display = adStyle.display;
+        let margin = adStyle.margin;
+        let padding = adStyle.padding;
+        let border = adStyle.border;
+        let position = adStyle.position;
+
+        // Create the replacement element
+        let quoteElement = document.createElement("div");
+        quoteElement.innerText = quoteText;
+        quoteElement.classList.add("quote-box");
+
+        // Apply styles to match the ad
+        quoteElement.style.width = width;
+        quoteElement.style.height = height;
+        quoteElement.style.display = display;
+        quoteElement.style.margin = margin;
+        quoteElement.style.padding = padding;
+        quoteElement.style.border = border;
+        quoteElement.style.position = position;
+
+        // Set text to center
+        quoteElement.style.display = "flex";
+        quoteElement.style.alignItems = "center";
+        quoteElement.style.justifyContent = "center";
+        quoteElement.style.textAlign = "center";
+
+        // Replace ad with quote
+        ad.replaceWith(quoteElement);
+        console.log("Replaced Ad with Quote:", quoteElement);
+      });
+    });
+  } catch (error) {
+    console.error("Error fetching quote:", error);
+  }
 }
+
 
 // Run the functions when the page loads
 removeAds();
