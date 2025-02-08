@@ -10,6 +10,10 @@ function removeAds() {
     ".adsbygoogle", // AdSense injected elements
     'div[id^="google_ads_"]', // Google-generated ad IDs
     "ins.adsbygoogle", // Common AdSense ad container
+    'iframe[src*="adservice.google.com"]', // Google AdSense
+    'iframe[src*="adsystem.com"]', // Common ad system
+    'iframe[src*="ad"]', // Generic iframe ads
+    'ins[class*="ad"]', // Other injected ad elements
   ];
 
   adSelectors.forEach((selector) => {
@@ -41,6 +45,10 @@ async function replaceAdsWithQuote() {
       ".adsbygoogle", // AdSense injected elements
       'div[id^="google_ads_"]', // Google-generated ad IDs
       "ins.adsbygoogle", // Common AdSense ad container
+      'iframe[src*="adservice.google.com"]', // Google AdSense
+      'iframe[src*="adsystem.com"]', // Common ad system
+      'iframe[src*="ad"]', // Generic iframe ads
+      'ins[class*="ad"]', // Other injected ad elements
     ];
 
     adSelectors.forEach((selector) => {
