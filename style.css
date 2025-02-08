@@ -1,22 +1,32 @@
 @keyframes backgroundAnimation {
-    0% { background-color: #ff9a9e; }
-    25% { background-color: #fad0c4; }
-    50% { background-color: #ffdde1; }
-    75% { background-color: #fbc2eb; }
-    100% { background-color: #ff9a9e; }
+  0% {
+    background-color: #69f387;
+  }
+  25% {
+    background-color: #c3f7b3;
+  }
+  50% {
+    background-color: #93d09a;
+  }
+  75% {
+    background-color: #9aeddb;
+  }
+  100% {
+    background-color: #70c0e6;
+  }
 }
 
 .quote-box {
-    font-size: 16px;
-    font-family: 'Arial', sans-serif;
-    color: white;
-    text-align: center;
-    border-radius: 8px;
-    animation: backgroundAnimation 8s infinite alternate ease-in-out;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  font-family: "Arial", sans-serif;
+  color: white;
+  text-align: center;
+  border-radius: 8px;
+  animation: backgroundAnimation 8s infinite alternate ease-in-out;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 
-    /* Ensuring the box remains inside the original ad space */
-    overflow: hidden;
-    white-space: normal;
-    word-wrap: break-word;
+  /* Ensuring the box remains inside the original ad space */
+  overflow: hidden;
+  white-space: normal;
+  word-wrap: break-word;
 }
