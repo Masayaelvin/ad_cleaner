@@ -116,5 +116,4 @@ function hideBlockedAds() {
   });
 }
 
-// Run when the page loads
 hideBlockedAds();
