@@ -1,27 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ad Cleaner Settings</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            width: 250px;
-            padding: 10px;
-        }
-        label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="popup.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h2>Ad Cleaner Settings</h2>
-    <label>
-        <input type="checkbox" id="totalSilenceToggle">
-        Enable Total Silence (Remove All Ads)
-    </label>
+    <div class="popup-container">
+        <h2 class="title">Ad Cleaner</h2>
+        <p class="subtitle">Customize your browsing experience</p>
+
+        <!-- Total Silence Toggle -->
+        <div class="toggle-container">
+            <span>Total Silence Mode</span>
+            <label class="switch">
+                <input type="checkbox" id="totalSilenceToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <p class="info-text">
+            When enabled, all ads will be **completely removed** instead of being replaced.
+        </p>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>🚀 Built to make your browsing experience better!</p>
+        </div>
+    </div>
+
     <script src="popup.js"></script>
 </body>
 </html>
