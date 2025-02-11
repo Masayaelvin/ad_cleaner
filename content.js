@@ -1,29 +1,61 @@
 console.log("Ad Cleaner Extension Content Script Loaded!");
 
-// Function to find and remove ads
+// Listen for toggle updates from popup.js
+window.addEventListener("message", (event) => {
+  if (event.data.type === "UPDATE_TOTAL_SILENCE") {
+    chrome.storage.sync.set({ totalSilence: event.data.value });
+    applyAdBlockingMode();
+  }
+});
+
+// Function to completely remove all ads (Total Silence Mode)
+function removeAllAds() {
+  const adSelectors = [
+    'iframe[src*="google.com"]',
+    'iframe[src*="doubleclick.net"]',
+    "[data-ad-client]",
+    "[data-ad-slot]",
+    ".adsbygoogle",
+    'div[id^="google_ads_"]',
+    "ins.adsbygoogle",
+    'iframe[src*="adservice.google.com"]',
+    'iframe[src*="adsystem.com"]',
+    'iframe[src*="ad"]',
+    'ins[class*="ad"]',
+  ];
+
+  adSelectors.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((ad) => {
+      ad.remove(); // Completely remove ad elements
+      console.log("Removed Ad:", ad);
+    });
+  });
+}
+
+// Function to hide ads (Default Mode - Hide but do not remove completely)
 function removeAds() {
   const adSelectors = [
-    'iframe[src*="google.com"]', // Google-hosted ad iframes
-    'iframe[src*="doubleclick.net"]', // DoubleClick (Google Ad Network)
-    "[data-ad-client]", // Google AdSense elements
-    "[data-ad-slot]", // Google Ad slots
-    ".adsbygoogle", // AdSense injected elements
-    'div[id^="google_ads_"]', // Google-generated ad IDs
-    "ins.adsbygoogle", // Common AdSense ad container
-    'iframe[src*="adservice.google.com"]', // Google AdSense
-    'iframe[src*="adsystem.com"]', // Common ad system
-    'iframe[src*="ad"]', // Generic iframe ads
-    'ins[class*="ad"]', // Other injected ad elements
+    'iframe[src*="google.com"]',
+    'iframe[src*="doubleclick.net"]',
+    "[data-ad-client]",
+    "[data-ad-slot]",
+    ".adsbygoogle",
+    'div[id^="google_ads_"]',
+    "ins.adsbygoogle",
+    'iframe[src*="adservice.google.com"]',
+    'iframe[src*="adsystem.com"]',
+    'iframe[src*="ad"]',
+    'ins[class*="ad"]',
   ];
 
   adSelectors.forEach((selector) => {
     let ads = document.querySelectorAll(selector);
     ads.forEach((ad) => {
-      // Ignore large containers (to avoid removing entire pages)
+      // Avoid removing large sections
       let rect = ad.getBoundingClientRect();
       if (rect.width < 800 && rect.height < 600) {
         ad.style.display = "none";
-        console.log("Removed Ad:", ad);
+        console.log("Hid Ad:", ad);
       }
     });
   });
@@ -34,21 +66,20 @@ async function replaceAdsWithQuote() {
   try {
     let response = await fetch("http://127.0.0.1:8000/random_quote"); // Fetch quote from FastAPI
     let data = await response.json();
-
     let quoteText = `"${data.quote}" - ${data.author}`;
 
     const adSelectors = [
-      'iframe[src*="google.com"]', // Google-hosted ad iframes
-      'iframe[src*="doubleclick.net"]', // DoubleClick (Google Ad Network)
-      "[data-ad-client]", // Google AdSense elements
-      "[data-ad-slot]", // Google Ad slots
-      ".adsbygoogle", // AdSense injected elements
-      'div[id^="google_ads_"]', // Google-generated ad IDs
-      "ins.adsbygoogle", // Common AdSense ad container
-      'iframe[src*="adservice.google.com"]', // Google AdSense
-      'iframe[src*="adsystem.com"]', // Common ad system
-      'iframe[src*="ad"]', // Generic iframe ads
-      'ins[class*="ad"]', // Other injected ad elements
+      'iframe[src*="google.com"]',
+      'iframe[src*="doubleclick.net"]',
+      "[data-ad-client]",
+      "[data-ad-slot]",
+      ".adsbygoogle",
+      'div[id^="google_ads_"]',
+      "ins.adsbygoogle",
+      'iframe[src*="adservice.google.com"]',
+      'iframe[src*="adsystem.com"]',
+      'iframe[src*="ad"]',
+      'ins[class*="ad"]',
     ];
 
     adSelectors.forEach((selector) => {
@@ -78,7 +109,7 @@ async function replaceAdsWithQuote() {
         quoteElement.style.border = border;
         quoteElement.style.position = position;
 
-        // Set text to center
+        // Center text
         quoteElement.style.display = "flex";
         quoteElement.style.alignItems = "center";
         quoteElement.style.justifyContent = "center";
@@ -94,18 +125,34 @@ async function replaceAdsWithQuote() {
   }
 }
 
-// Run the functions when the page loads
-removeAds();
-replaceAdsWithQuote();
+// Function to apply the correct ad-blocking mode based on toggle state
+function applyAdBlockingMode() {
+  chrome.storage.sync.get("totalSilence", (data) => {
+    if (data.totalSilence) {
+      console.log("Total Silence Mode Activated: Removing All Ads");
+      removeAllAds();
+    } else {
+      console.log("Quote Replacement Mode Activated");
+      removeAds();
+      replaceAdsWithQuote();
+    }
+  });
+}
 
-// Run again when the user scrolls (to catch dynamically loaded ads)
-window.addEventListener("scroll", () => {
-  removeAds();
-  replaceAdsWithQuote();
-});
+// Monitor page for dynamically loaded ads
+function observeAds() {
+  const observer = new MutationObserver(() => {
+    applyAdBlockingMode(); // Re-run blocking based on mode
+  });
 
-console.log("Ad Cleaner Extension Content Script Loaded!");
+  observer.observe(document.body, { childList: true, subtree: true });
+}
 
+// Run the function on page load
+applyAdBlockingMode();
+observeAds();
+
+// Function to hide manually blocked ads
 function hideBlockedAds() {
   let blockedAds = JSON.parse(localStorage.getItem("blockedAds")) || [];
   blockedAds.forEach((selector) => {
@@ -116,4 +163,7 @@ function hideBlockedAds() {
   });
 }
 
+// Run manually blocked ad removal when page loads
 hideBlockedAds();
+
+console.log("Ad Cleaner Extension Content Script Fully Loaded!");
