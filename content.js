@@ -64,7 +64,7 @@ function removeAds() {
 // Function to replace ads with a quote from the API
 async function replaceAdsWithQuote() {
   try {
-    let response = await fetch("http://127.0.0.1:8000/random_quote"); // Fetch quote from FastAPI
+    let response = await fetch("https://backend.jaliwafreshexportersltd.co.ke/random_quote"); // Fetch quote from FastAPI
     let data = await response.json();
     let quoteText = `"${data.quote}" - ${data.author}`;
 
