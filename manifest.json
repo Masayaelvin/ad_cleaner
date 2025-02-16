@@ -15,12 +15,17 @@
       "css": ["style.css"]
     }
   ],
+  "icons": {
+    "16": "icons/ad_cleaner_logo_v2_16x16.png",
+    "48": "icons/ad_cleaner_logo_v2_128x128.png",
+    "128": "icons/ad_cleaner_logo_v2_48x48.png"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "icons/2.jpg",
-      "48": "icons/abt.jpg",
-      "128": "icons/about.jpg"
+      "16": "icons/ad_cleaner_logo_v2_16x16.png",
+      "48": "icons/ad_cleaner_logo_v2_128x128.png",
+      "128": "icons/ad_cleaner_logo_v2_48x48.png"
     }
   }
 }
